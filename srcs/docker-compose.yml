@@ -3,16 +3,10 @@ services:
     build: requirements/nginx
     container_name: nginx
     ports:
-<<<<<<< HEAD
       - "443:443"
     volumes:
       - ./web:/var/www/html
     restart: always
-=======
-      - "80:80"
-    volumes:
-      - ./web:/var/www/html
->>>>>>> 1b2461b6e95417ef717de677eb055e18728ea82d
   wordpress:
     build: requirements/wordpress
     container_name: wordpress
