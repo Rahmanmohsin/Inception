@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 FROM debian:bullseye
 
 RUN apt update && apt install -y nginx
@@ -22,5 +23,12 @@ RUN ln -s /etc/nginx/sites-available/mohrahma.42.fr /etc/nginx/sites-enabled/
 # }
 # ...
 # Save and close the file when you are finished.
+=======
+FROM debian:latest
+
+RUN apt update && apt upgrade -y && apt install -y nginx
+
+COPY default /etc/nginx/sites-available/.
+>>>>>>> 1b2461b6e95417ef717de677eb055e18728ea82d
 
 CMD ["nginx", "-g", "daemon off;"]
