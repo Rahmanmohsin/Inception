@@ -1,45 +1,40 @@
 DC = docker compose
 DC_FILE = srcs/docker-compose.yml
 
-.PHONY: build up down start stop restart logs clean fclean re ps
+.PHONY: build up down start stop restart logs clean fclean re ps volumes
 
-debug: build up log ps volumes
-
-build:		# Build Docker containers 
+build:
 	$(DC) -f $(DC_FILE) build
 
-up:			# Start Docker containers in the background
+up:
 	$(DC) -f $(DC_FILE) up -d
 
-down:		# Stop and remove Docker containers
+down:
 	$(DC) -f $(DC_FILE) down
 
-start: 		# Start previously stopped containers
+start:
 	$(DC) -f $(DC_FILE) start
 
-stop:		# Stop running containers without removing them
+stop:
 	$(DC) -f $(DC_FILE) stop
 
-restart:	# Restart running containers
+restart:
 	$(DC) -f $(DC_FILE) restart
 
-log:		# Show logs from all containers
+logs:
 	$(DC) -f $(DC_FILE) logs
 
-volumes:		# List all volumes
-	$(DC) -f $(DC_FILE) volume ls
+volumes:
+	docker volume ls
 
-clean:		# Stop and remove containers, networks, images, volumes and orphaned containers
+clean:
 	$(DC) -f $(DC_FILE) down --rmi all --volumes --remove-orphans
 
-fclean: 	# Force stop and remove containers, networks, images, volumes, and orphaned containers
-	$(DC) -f $(DC_FILE) down --rmi all --volumes --remove-orphans
-	$(DC) -f $(DC_FILE) rm -f
+fclean: clean
 	$(DC) -f $(DC_FILE) kill
-	# rm -r srcs/web
+	docker system prune -af
 
-re: fclean build 	# Rebuild the containers
-	$(DC) -f $(DC_FILE) up -d
+re: fclean build up
 
-ps:					# List containers
+ps:
 	$(DC) -f $(DC_FILE) ps
