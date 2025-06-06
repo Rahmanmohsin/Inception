@@ -7,7 +7,7 @@ SSL_DIR = srcs/requirements/nginx/ssl
 
 debug: build up log ps volumes
 
-build:		# Build Docker containers 
+build:
 	$(DC) -f $(DC_FILE) build
 
 up:
@@ -34,14 +34,11 @@ volumes:
 clean:
 	$(DC) -f $(DC_FILE) down --rmi all --volumes --remove-orphans
 
-fclean: 	# Force stop and remove containers, networks, images, volumes, and orphaned containers
-	$(DC) -f $(DC_FILE) down --rmi all --volumes --remove-orphans
-	$(DC) -f $(DC_FILE) rm -f
+fclean: clean
 	$(DC) -f $(DC_FILE) kill
-	# rm -r srcs/web
+	docker system prune -af
 
-re: fclean build 	# Rebuild the containers
-	$(DC) -f $(DC_FILE) up -d
+re: fclean build up
 
 ps:
 	$(DC) -f $(DC_FILE) ps
