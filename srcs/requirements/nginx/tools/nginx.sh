@@ -12,11 +12,6 @@ openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
 	-subj "/C=DE/ST=Baden-Wuerttemberg/L=Heilbronn/OU=42 Heilbronn Students/CN=$DOMAIN"
 
 cat > "$SITES_DIR/default" <<EOF
-server {
-    listen 80;
-    server_name $DOMAIN;
-    return 301 https://\$host\$request_uri;
-}
 
 server {
     listen 443 ssl http2;

@@ -4,7 +4,7 @@ DATA_DIR = /home/mohrahma/data
 SSL_DIR = srcs/requirements/nginx/ssl
 
 make:
-	@$(DC) -f $(DC_FILE) build
+	@$(DC) -f --quiet $(DC_FILE) build
 	@$(DC) -f $(DC_FILE) up -d
 
 down:

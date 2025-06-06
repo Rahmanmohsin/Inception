@@ -1,16 +1,40 @@
 services:
   nginx:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ./requirements/nginx/
     container_name: nginx
     ports:
       - "443:443"
     volumes:
-      - ./html:/var/www/html
+      - ./srcs/requirements/nginx/html:/var/www/html
+      - ./srcs/requirements/nginx/ssl:/etc/nginx/ssl
     networks:
       - inception_network
+    depends_on:
+      - mariadb
     restart: unless-stopped
+    env_file:
+      - .env
+
+  mariadb:
+   build:
+     context: ./requirements/mariadb/
+   container_name: mariadb
+   volumes:
+     - mariadb_data:/var/lib/mysql
+   networks:
+     - inception_network
+   environment:
+     - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+     - MYSQL_DATABASE=${DB_NAME}
+     - MYSQL_USER=${DB_USER}
+     - MYSQL_PASSWORD=${DB_PASSWORD}
+   restart: unless-stopped
+   env_file:
+     - .env
+
+volumes:
+  mariadb_data:
 
 networks:
   inception_network:

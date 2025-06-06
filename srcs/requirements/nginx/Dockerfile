@@ -8,4 +8,6 @@ COPY 	./tools/nginx.sh /nginx.sh
 
 RUN 	chmod +x /nginx.sh
 
+EXPOSE	443
+
 CMD	["sh", "-c", "/nginx.sh && nginx -g 'daemon off;'"]
