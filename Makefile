@@ -1,45 +1,67 @@
 DC = docker compose
 DC_FILE = srcs/docker-compose.yml
+DATA_DIR = /home/mohrahma/data
+SSL_DIR = srcs/requirements/nginx/ssl
 
-.PHONY: build up down start stop restart logs clean fclean re ps
+.PHONY: build up down start stop restart logs clean fclean re ps debug volumes
 
-debug: build up log ps volumes
+debug: build up logs ps volumes
 
-build:		# Build Docker containers 
+build:
+	@sudo mkdir -p $(DATA_DIR)/{mariadb,wordpress}
+	@sudo mkdir -p $(SSL_DIR)/{certs,private}
+	@sudo chmod -R 755 $(DATA_DIR) $(SSL_DIR)
 	$(DC) -f $(DC_FILE) build
 
-up:			# Start Docker containers in the background
+up:
 	$(DC) -f $(DC_FILE) up -d
 
-down:		# Stop and remove Docker containers
+down:
 	$(DC) -f $(DC_FILE) down
 
-start: 		# Start previously stopped containers
+start:
 	$(DC) -f $(DC_FILE) start
 
-stop:		# Stop running containers without removing them
+stop:
 	$(DC) -f $(DC_FILE) stop
 
-restart:	# Restart running containers
+restart:
 	$(DC) -f $(DC_FILE) restart
 
-log:		# Show logs from all containers
+logs:
 	$(DC) -f $(DC_FILE) logs
 
-volumes:		# List all volumes
-	$(DC) -f $(DC_FILE) volume ls
+volumes:
+	docker volume ls
 
-clean:		# Stop and remove containers, networks, images, volumes and orphaned containers
+clean:
 	$(DC) -f $(DC_FILE) down --rmi all --volumes --remove-orphans
 
-fclean: 	# Force stop and remove containers, networks, images, volumes, and orphaned containers
-	$(DC) -f $(DC_FILE) down --rmi all --volumes --remove-orphans
-	$(DC) -f $(DC_FILE) rm -f
-	$(DC) -f $(DC_FILE) kill
-	# rm -r srcs/web
+fclean: clean
+	@if [ -d "$(DATA_DIR)" ]; then \
+		sudo rm -rf $(DATA_DIR); \
+		echo "Removed $(DATA_DIR)"; \
+	else \
+		echo "$(DATA_DIR) does not exist - skipping"; \
+	fi
+	@if [ -d "$(SSL_DIR)" ]; then \
+		sudo rm -rf $(SSL_DIR); \
+		echo "Removed $(SSL_DIR)"; \
+	else \
+		echo "$(SSL_DIR) does not exist - skipping"; \
+	fi
+	sudo docker system prune -af
 
-re: fclean build 	# Rebuild the containers
+re: fclean
+	@sudo mkdir -p $(DATA_DIR)/{mariadb,wordpress}
+	@sudo mkdir -p $(SSL_DIR)/{certs,private}
+	@sudo chmod -R 755 $(DATA_DIR) $(SSL_DIR)
+	sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+		-keyout $(SSL_DIR)/private/nginx.key \
+		-out $(SSL_DIR)/certs/nginx.crt \
+		-subj "/CN=localhost"
+	$(DC) -f $(DC_FILE) build
 	$(DC) -f $(DC_FILE) up -d
 
-ps:					# List containers
+ps:
 	$(DC) -f $(DC_FILE) ps
