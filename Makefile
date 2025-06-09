@@ -4,7 +4,7 @@ DATA_DIR = /home/mohrahma/data
 SSL_DIR = srcs/requirements/nginx/ssl
 
 make:
-	@$(DC) -f --quiet $(DC_FILE) build
+	@$(DC) -f $(DC_FILE) build
 	@$(DC) -f $(DC_FILE) up -d
 
 down:
@@ -30,9 +30,11 @@ clean:
 
 fclean: clean
 	@$(DC) -f $(DC_FILE) kill
+	sudo rm -rf ./srcs/web/
+	sudo rm -rf ./srcs/database/
 	@docker system prune -af
 
-re: fclean build up
+re: fclean make
 
 ps:
 	@$(DC) -f $(DC_FILE) ps

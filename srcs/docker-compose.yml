@@ -6,35 +6,55 @@ services:
     ports:
       - "443:443"
     volumes:
-      - ./srcs/requirements/nginx/html:/var/www/html
-      - ./srcs/requirements/nginx/ssl:/etc/nginx/ssl
+      - ./web:/var/www/html
     networks:
       - inception_network
     depends_on:
+      - wordpress
       - mariadb
-    restart: unless-stopped
+    restart: on-failure
     env_file:
       - .env
 
   mariadb:
-   build:
-     context: ./requirements/mariadb/
-   container_name: mariadb
-   volumes:
-     - mariadb_data:/var/lib/mysql
-   networks:
-     - inception_network
-   environment:
-     - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
-     - MYSQL_DATABASE=${DB_NAME}
-     - MYSQL_USER=${DB_USER}
-     - MYSQL_PASSWORD=${DB_PASSWORD}
-   restart: unless-stopped
-   env_file:
-     - .env
+    build:
+      context: ./requirements/mariadb/
+    container_name: mariadb
+    volumes:
+      - ./database:/var/lib/mysql
+    networks:
+      - inception_network
+    restart: on-failure
+    env_file:
+      - .env
+
+  wordpress:
+    build:
+      context: ./requirements/wordpress/
+    container_name: wordpress
+    networks:
+      - inception_network
+    volumes:
+      - ./web:/var/www/html
+    restart: on-failure
+    env_file:
+      - .env
 
 volumes:
-  mariadb_data:
+  database:
+    name: db
+    driver: local
+    driver_opts:
+      type: bind
+      o: bind
+      device: "/home/${INCEPTION_LOGIN}/data/database"
+  web:
+    name: web
+    driver: local
+    driver_opts:
+      type: bind
+      o: bind
+      device: "/home/${INCEPTION_LOGIN}/data/wordpress"
 
 networks:
   inception_network:

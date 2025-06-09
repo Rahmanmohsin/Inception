@@ -1,8 +1,8 @@
 FROM	debian:bullseye
 
-RUN	apt update -y && apt upgrade -y && \
-	apt install -y nginx openssl && \
-	apt install -y sudo curl
+RUN		apt update -y && apt upgrade -y && \
+		apt install -y nginx openssl && \
+		apt install -y sudo curl
 
 COPY 	./tools/nginx.sh /nginx.sh
 
@@ -10,4 +10,4 @@ RUN 	chmod +x /nginx.sh
 
 EXPOSE	443
 
-CMD	["sh", "-c", "/nginx.sh && nginx -g 'daemon off;'"]
+CMD		["sh", "-c", "./nginx.sh && nginx -g 'daemon off;'"]

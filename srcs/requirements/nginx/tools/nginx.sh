@@ -24,12 +24,21 @@ server {
     ssl_session_cache shared:SSL:10m;
     ssl_session_tickets off;
     
+    root /var/www/html;
+
+    index index.php index.html index.htm index.nginx-debian.html;
+
     ssl_protocols TLSv1.3;
     ssl_prefer_server_ciphers off;
     
     location / {
         root /var/www/html;
         index index.html;
+    }
+
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass wordpress:9000;
     }
 }
 EOF
