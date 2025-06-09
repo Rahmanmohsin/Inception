@@ -6,12 +6,7 @@ SITES_DIR="/etc/nginx/sites-available"
 
 mkdir -p "$SSL_DIR"
 
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-    	-keyout "$SSL_DIR/key.pem" \
-    	-out "$SSL_DIR/fullchain.pem" \
-	-subj "/C=DE/ST=Baden-Wuerttemberg/L=Heilbronn/OU=42 Heilbronn Students/CN=$DOMAIN"
-
-cat > "$SITES_DIR/default" <<EOF
+cat > "etc/nginx/ningx.conf" <<EOF
 
 server {
     listen 443 ssl http2;
@@ -42,6 +37,11 @@ server {
     }
 }
 EOF
+
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+    	    -keyout "$SSL_DIR/key.pem" \
+    	    -out "$SSL_DIR/fullchain.pem" \
+    	    --subj "/C=DE/ST=Baden-Wuerttemberg/L=Heilbronn/OU=42 Heilbronn Students/CN=$DOMAIN"
 
 ln -sf "$SITES_DIR/default" "/etc/nginx/sites-enabled/default"
 nginx -t

@@ -1,53 +1,19 @@
 #!/bin/bash
-
 set -e
 
-if [ ! -d "/var/lib/mysql/mysql" ]; then
-    mysql_install_db --user=mysql --datadir=/var/lib/mysql
-fi
+service mariadb start
 
-temp_server_start() {
-    mysqld_safe --skip-networking --socket=/var/run/mysqld/mysqld.sock &
-    MYSQLD_PID=$!
-    for i in {1..30}; do
-        if mysqladmin ping --socket=/var/run/mysqld/mysqld.sock --silent; then
-            break
-        fi
-        sleep 1
-    done
-}
+until mariadb-admin ping --silent; do
+  sleep 1
+done
 
-secure_installation() {
-    ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-$(openssl rand -base64 24)}
-    
-    mysql --socket=/var/run/mysqld/mysqld.sock <<-EOF
-        -- Modern MariaDB password setting
-        SET PASSWORD FOR 'root'@'localhost' = PASSWORD('$ROOT_PASSWORD');
-        
-        -- Alternative modern syntax if above fails
-        ALTER USER 'root'@'localhost' IDENTIFIED BY '$ROOT_PASSWORD';
-        
-        -- Remove anonymous users
-        DELETE FROM mysql.global_priv WHERE User='';
-        
-        -- Disallow remote root login
-        DELETE FROM mysql.global_priv WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
-        
-        -- Remove test database
-        DROP DATABASE IF EXISTS test;
-        DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%';
-        
-        -- Apply changes
-        FLUSH PRIVILEGES;
+mariadb -u root <<EOF
+CREATE DATABASE IF NOT EXISTS \`${MYSQL_DATABASE}\`;
+CREATE USER IF NOT EXISTS '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASS}';
+GRANT ALL PRIVILEGES ON \`${MYSQL_DATABASE}\`.* TO '${MYSQL_USER}'@'%';
+FLUSH PRIVILEGES;
 EOF
 
-    echo "MariaDB root password: $ROOT_PASSWORD"
-}
+mysqladmin shutdown -u root
 
-temp_server_start
-secure_installation
-
-kill $MYSQLD_PID
-wait $MYSQLD_PID
-
-exec mysqld_safe
+exec mysqld --bind-address=0.0.0.0 --port=3306 --user=root

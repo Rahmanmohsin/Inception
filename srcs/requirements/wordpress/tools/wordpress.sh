@@ -8,8 +8,8 @@ sed -i '36 s/\/run\/php\/php7.4-fpm.sock/9000/' /etc/php/7.4/fpm/pool.d/www.conf
 
 for ((i = 1; i <= 10; i++)); do
     if mariadb -h mariadb -P 3306 \
-        -u "${INCEPTION_MYSQL_USER}" \
-        -p"${INCEPTION_MYSQL_PASS}" -e "SELECT 1" > /dev/null 2>&1; then
+        -u "${MYSQL_USER}" \
+        -p"${MYSQL_PASS}" -e "SELECT 1" > /dev/null 2>&1; then
         break
     else
         sleep 2
@@ -18,26 +18,19 @@ done
 
 wp core download --allow-root
 wp config create \
-    --dbname=${INCEPTION_MYSQL_DATABASE} \
-    --dbuser=${INCEPTION_MYSQL_USER} \
-    --dbpass=${INCEPTION_MYSQL_PASS} \
+    --dbname=${MYSQL_DATABASE} \
+    --dbuser=${MYSQL_USER} \
+    --dbpass=${MYSQL_PASS} \
     --dbhost=mariadb:3306 --allow-root
 wp core install \
-    --url=${INCEPTION_DOMAIN_NAME} \
-    --title=${INCEPTION_WP_TITLE} \
-    --admin_user=${INCEPTION_WP_A_NAME} \
-    --admin_password=${INCEPTION_WP_A_PASS} \
-    --admin_email=${INCEPTION_WP_A_EMAIL} --allow-root
-wp user create ${INCEPTION_WP_U_NAME} ${INCEPTION_WP_U_EMAIL} \
-    --user_pass=${INCEPTION_WP_U_PASS} \
-    --role=${INCEPTION_WP_U_ROLE} --allow-root
-
-wp theme install twentytwentyfour --activate --allow-root
-
-wp plugin install redis-cache --activate --allow-root
-wp config set WP_REDIS_HOST redis --allow-root
-wp config set WP_REDIS_PORT 6379 --raw --allow-root
-wp redis enable --allow-root
+    --url=${DOMAIN_NAME} \
+    --title=${WORDPRESS_TITLE} \
+    --admin_user=${WORDPRESS_A_NAME} \
+    --admin_password=${WORDPRESS_A_PASS} \
+    --admin_email=${WORDPRESS_A_EMAIL} --allow-root
+wp user create ${WORDPRESS_U_NAME} ${WORDPRESS_U_EMAIL} \
+    --user_pass=${WORDPRESS_U_PASS} \
+    --role=${WORDPRESS_U_ROLE} --allow-root
 
 chown -R www-data:www-data /var/www/html
 
