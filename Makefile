@@ -1,10 +1,9 @@
 DC = docker compose
 DC_FILE = srcs/docker-compose.yml
 DATA_DIR = /home/mohrahma/data
-SSL_DIR = srcs/requirements/nginx/ssl
 
 make:
-	@$(DC) -f --quiet $(DC_FILE) build
+	@$(DC) -f $(DC_FILE) build
 	@$(DC) -f $(DC_FILE) up -d
 
 down:
@@ -32,11 +31,11 @@ fclean: clean
 	@$(DC) -f $(DC_FILE) kill
 	@docker system prune -af
 
-re: fclean build up
-
 ps:
 	@$(DC) -f $(DC_FILE) ps
 
 debug: logs ps volumes
+
+re: fclean make
 
 .PHONY: build up down start stop restart logs clean fclean re ps
