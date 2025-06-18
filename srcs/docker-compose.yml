@@ -6,12 +6,12 @@ services:
     ports:
       - "443:443"
     volumes:
-      - ./srcs/requirements/nginx/html:/var/www/html
+      - wordpress:/var/www/html
       - ./srcs/requirements/nginx/ssl:/etc/nginx/ssl
     networks:
       - inception_network
     depends_on:
-      - mariadb
+      - wordpress
     restart: on-failure
     env_file:
       - .env
@@ -44,6 +44,7 @@ services:
 
 volumes:
   mariadb_data:
+  wordpress:
 
 networks:
   inception_network:
