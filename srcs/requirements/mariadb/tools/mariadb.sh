@@ -1,4 +1,5 @@
 #!/bin/bash
+
 set -e
 
 service mariadb start
@@ -14,6 +15,6 @@ GRANT ALL PRIVILEGES ON \`${MYSQL_DATABASE}\`.* TO '${MYSQL_USER}'@'%';
 FLUSH PRIVILEGES;
 EOF
 
-mysqladmin shutdown -u root
+mysqladmin shutdown --socket=/var/run/mysqld/mysqld.sock -u root
 
-exec mysqld --bind-address=0.0.0.0 --port=3306 --user=root
+exec mysqld

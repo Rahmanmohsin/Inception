@@ -13,18 +13,17 @@ openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
 
 cat > "$SITES_DIR/default" <<EOF
 server {
-    listen 80;
-    server_name $DOMAIN www.$DOMAIN;
-    return 301 https://\$host\$request_uri;
+    listen 80 default_server;
+    server_name _;
+    return 404;
 }
 
 server {
-    listen 80 default_server;
     listen 443 ssl default_server;
     server_name _;
     ssl_certificate $SSL_DIR/fullchain.pem;
     ssl_certificate_key $SSL_DIR/key.pem;
-    return 444;
+    return 404;
 }
 
 server {

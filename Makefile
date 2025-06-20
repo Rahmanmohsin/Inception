@@ -2,6 +2,7 @@ DC = docker compose
 DC_FILE = srcs/docker-compose.yml
 MARIADB_DIR = /home/mohrahma/data/mariadb
 WORDPRESS_DIR = /home/mohrahma/data/wordpress
+
 make:
 	@mkdir -p $(MARIADB_DIR)
 	@mkdir -p $(WORDPRESS_DIR)
