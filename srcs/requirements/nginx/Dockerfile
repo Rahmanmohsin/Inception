@@ -2,7 +2,8 @@ FROM	debian:bullseye
 
 RUN	apt update -y && apt upgrade -y && \
 	apt install -y nginx openssl && \
-	apt install -y sudo curl
+	apt install -y sudo curl && \
+	rm -rf /etc/nginx/sites-enabled/*
 
 COPY 	./tools/nginx.sh /nginx.sh
 

@@ -13,20 +13,35 @@ openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
 
 cat > "$SITES_DIR/default" <<EOF
 server {
-        listen 443 ssl;
-        root /var/www/html;
-        server_name $DOMAIN www.$DOMAIN;
-        index index.php;
+    listen 80;
+    server_name $DOMAIN www.$DOMAIN;
+    return 301 https://\$host\$request_uri;
+}
 
-        ssl_certificate $SSL_DIR/fullchain.pem;
-        ssl_certificate_key $SSL_DIR/key.pem;
-        ssl_protocols TLSv1.3;
+server {
+    listen 80 default_server;
+    listen 443 ssl default_server;
+    server_name _;
+    ssl_certificate $SSL_DIR/fullchain.pem;
+    ssl_certificate_key $SSL_DIR/key.pem;
+    return 444;
+}
 
-        location ~ \.php$ {
-            include snippets/fastcgi-php.conf;
-            fastcgi_pass wordpress:9000;
-        }
+server {
+    listen 443 ssl;
+    server_name $DOMAIN www.$DOMAIN;
+    root /var/www/html;
+    index index.php;
+
+    ssl_certificate $SSL_DIR/fullchain.pem;
+    ssl_certificate_key $SSL_DIR/key.pem;
+    ssl_protocols TLSv1.3;
+
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass wordpress:9000;
     }
+}
 EOF
 
 ln -sf "$SITES_DIR/default" "/etc/nginx/sites-enabled/default"

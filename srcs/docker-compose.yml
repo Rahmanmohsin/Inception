@@ -7,7 +7,6 @@ services:
       - "443:443"
     volumes:
       - wordpress:/var/www/html
-      - ./srcs/requirements/nginx/ssl:/etc/nginx/ssl
     networks:
       - inception_network
     depends_on:
@@ -21,7 +20,7 @@ services:
       context: ./requirements/mariadb/
     container_name: mariadb
     volumes:
-      - mariadb_data:/var/lib/mysql
+      - mariadb:/var/lib/mysql
     networks:
       - inception_network
     restart: on-failure
@@ -43,8 +42,20 @@ services:
       - .env
 
 volumes:
-  mariadb_data:
+  mariadb:
+    name: mariadb
+    driver: local
+    driver_opts:
+      type: bind
+      o: bind
+      device: "/home/mohrahma/data/mariadb"
   wordpress:
+    name: wordpress
+    driver: local
+    driver_opts:
+      type: bind
+      o: bind
+      device: "/home/mohrahma/data/wordpress"
 
 networks:
   inception_network:

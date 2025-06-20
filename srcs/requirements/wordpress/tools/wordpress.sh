@@ -28,6 +28,7 @@ wp core install \
     --admin_user=${WORDPRESS_A_NAME} \
     --admin_password=${WORDPRESS_A_PASS} \
     --admin_email=${WORDPRESS_A_EMAIL} --allow-root
+wp theme install twentytwentyfour --activate --allow-root
 wp user create ${WORDPRESS_U_NAME} ${WORDPRESS_U_EMAIL} \
     --user_pass=${WORDPRESS_U_PASS} \
     --role=${WORDPRESS_U_ROLE} --allow-root

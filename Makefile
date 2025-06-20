@@ -1,8 +1,10 @@
 DC = docker compose
 DC_FILE = srcs/docker-compose.yml
-DATA_DIR = /home/mohrahma/data
-
+MARIADB_DIR = /home/mohrahma/data/mariadb
+WORDPRESS_DIR = /home/mohrahma/data/wordpress
 make:
+	@mkdir -p $(MARIADB_DIR)
+	@mkdir -p $(WORDPRESS_DIR)
 	@$(DC) -f $(DC_FILE) build
 	@$(DC) -f $(DC_FILE) up -d
 
@@ -29,6 +31,8 @@ clean:
 
 fclean: clean
 	@$(DC) -f $(DC_FILE) kill
+	@sudo rm -rf $(MARIADB_DIR)
+	@sudo rm -rf $(WORDPRESS_DIR)
 	@docker system prune -af
 
 ps:
