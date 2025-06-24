@@ -26,6 +26,8 @@ services:
     restart: on-failure
     env_file:
       - .env
+    secrets:
+      - mysql_password
 
   wordpress:
     build: 
@@ -40,6 +42,18 @@ services:
     restart: on-failure
     env_file:
       - .env
+    secrets:
+      - mysql_password
+      - wordpress_user_password
+      - wordpress_root_password
+
+secrets:
+  mysql_password:
+    file: ./../secrets/credentials.txt
+  wordpress_user_password:
+    file: ./../db_password.txt
+  wordpress_root_password:
+    file: ./../db_root_password.txt
 
 volumes:
   mariadb:

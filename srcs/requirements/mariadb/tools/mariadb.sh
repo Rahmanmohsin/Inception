@@ -1,5 +1,7 @@
 #!/bin/bash
 
+MYSQL_PASS=$(cat /run/secrets/credentials.txt)
+
 set -e
 
 service mariadb start

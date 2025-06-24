@@ -9,6 +9,9 @@ make:
 	@$(DC) -f $(DC_FILE) build
 	@$(DC) -f $(DC_FILE) up -d
 
+up:
+	@$(DC) -f $(DC_FILE) up
+
 down:
 	@$(DC) -f $(DC_FILE) down
 

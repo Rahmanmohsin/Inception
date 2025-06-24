@@ -1,5 +1,9 @@
 #!/bin/bash
 
+MYSQL_PASS=$(cat /run/secrets/credentials.txt)
+WORDPRESS_R_PASS=$(cat /run/secrets/db_root_password.txt)
+WORDPRESS_U_PASS=$(cat /run/secrets/db_password.txt)
+
 curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
 chmod +x wp-cli.phar && mv wp-cli.phar /usr/local/bin/wp
 cd /var/www/html
@@ -25,9 +29,9 @@ wp config create \
 wp core install \
     --url=${DOMAIN_NAME} \
     --title=${WORDPRESS_TITLE} \
-    --admin_user=${WORDPRESS_A_NAME} \
-    --admin_password=${WORDPRESS_A_PASS} \
-    --admin_email=${WORDPRESS_A_EMAIL} --allow-root
+    --admin_user=${WORDPRESS_R_NAME} \
+    --admin_password=${WORDPRESS_R_PASS} \
+    --admin_email=${WORDPRESS_R_EMAIL} --allow-root
 wp theme install twentytwentyfour --activate --allow-root
 wp user create ${WORDPRESS_U_NAME} ${WORDPRESS_U_EMAIL} \
     --user_pass=${WORDPRESS_U_PASS} \
