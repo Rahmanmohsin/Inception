@@ -15,7 +15,13 @@ cat > "$SITES_DIR/default" <<EOF
 server {
     listen 80 default_server;
     server_name _;
-    return 404;
+    return 444;
+}
+
+server {
+    listen 80;
+    server_name mohrahma.42.fr;
+    return 444;
 }
 
 server {
@@ -23,7 +29,7 @@ server {
     server_name _;
     ssl_certificate $SSL_DIR/fullchain.pem;
     ssl_certificate_key $SSL_DIR/key.pem;
-    return 404;
+    return 444;
 }
 
 server {

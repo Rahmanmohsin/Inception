@@ -8,6 +8,4 @@ COPY    ./tools/wordpress.sh /wordpress.sh
 
 RUN     chmod +x /wordpress.sh
 
-EXPOSE  9000
-
 CMD     [ "/wordpress.sh" ]

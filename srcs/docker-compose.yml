@@ -19,6 +19,8 @@ services:
     build:
       context: ./requirements/mariadb/
     container_name: mariadb
+    ports:
+       - "3306:3306"
     volumes:
       - mariadb:/var/lib/mysql
     networks:
@@ -33,6 +35,8 @@ services:
     build: 
       context: ./requirements/wordpress
     container_name: wordpress
+    ports:
+      - "9000:9000"
     volumes:
       - wordpress:/var/www/html
     networks:
@@ -51,9 +55,9 @@ secrets:
   mysql_password:
     file: ./../secrets/credentials.txt
   wordpress_user_password:
-    file: ./../db_password.txt
+    file: ./../secrets/db_password.txt
   wordpress_root_password:
-    file: ./../db_root_password.txt
+    file: ./../secrets/db_root_password.txt
 
 volumes:
   mariadb:

@@ -10,6 +10,4 @@ COPY 	./tools/mariadb.sh /mariadb.sh
 
 RUN 	chmod +x /mariadb.sh
 
-EXPOSE 	3306
-
 CMD 	["/mariadb.sh"]

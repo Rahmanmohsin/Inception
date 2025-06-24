@@ -4,13 +4,9 @@ MARIADB_DIR = /home/mohrahma/data/mariadb
 WORDPRESS_DIR = /home/mohrahma/data/wordpress
 
 make:
-	@mkdir -p $(MARIADB_DIR)
-	@mkdir -p $(WORDPRESS_DIR)
+	@mkdir -p $(MARIADB_DIR) $(WORDPRESS_DIR)
 	@$(DC) -f $(DC_FILE) build
 	@$(DC) -f $(DC_FILE) up -d
-
-up:
-	@$(DC) -f $(DC_FILE) up
 
 down:
 	@$(DC) -f $(DC_FILE) down
@@ -32,13 +28,12 @@ volumes:
 
 clean:
 	@$(DC) -f $(DC_FILE) down --rmi all --volumes --remove-orphans
-
-fclean: clean
 	@$(DC) -f $(DC_FILE) kill
-	@sudo rm -rf $(MARIADB_DIR)
-	@sudo rm -rf $(WORDPRESS_DIR)
 	@docker system prune -af
 
+fclean: clean
+	@sudo rm -rf $(MARIADB_DIR)
+	@sudo rm -rf $(WORDPRESS_DIR)
 ps:
 	@$(DC) -f $(DC_FILE) ps
 
@@ -46,4 +41,4 @@ debug: logs ps volumes
 
 re: fclean make
 
-.PHONY: build up down start stop restart logs clean fclean re ps
+.PHONY: build  down start stop restart logs clean fclean re ps

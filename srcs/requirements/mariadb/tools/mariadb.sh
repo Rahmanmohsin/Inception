@@ -1,10 +1,12 @@
 #!/bin/bash
 
-MYSQL_PASS=$(cat /run/secrets/credentials.txt)
+MYSQL_PASS=$(cat /run/secrets/mysql_password)
 
 set -e
 
-service mariadb start
+#service mariadb start
+
+mysqld_safe --skip-networking &
 
 until mariadb-admin ping --silent; do
   sleep 1
